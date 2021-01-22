@@ -1,0 +1,9 @@
+.fable/
+.fake/
+.ionide/
+.vs/
+obj/
+bin/
+packages/
+paket-files/
+*.DotSettings.user
