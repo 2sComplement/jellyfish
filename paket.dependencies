@@ -1,7 +1,26 @@
+source https://www.nuget.org/api/v2
+storage none
+
+framework: netcoreapp3.1, netstandard2.0
+
+nuget FSharp.Core 4.7.2
+
+group Test
+    source https://www.nuget.org/api/v2
+
+    nuget Microsoft.NET.Test.Sdk
+    nuget NUnit 3.11
+    nuget NUnit.ConsoleRunner 3.11.1
+    nuget NUnit3TestAdapter
+
+
 // [ FAKE GROUP ]
 group Build
-    storage none
     source https://api.nuget.org/v3/index.json
+    storage none
+
+    nuget FSharp.Core 4.7.2
     nuget Fake.DotNet.Cli
+    nuget Fake.DotNet.Testing.NUnit
     nuget Fake.IO.FileSystem
     nuget Fake.Core.Target

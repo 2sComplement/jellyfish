@@ -2,10 +2,7 @@ module Jellyfish.Tests
 
 open NUnit.Framework
 
-[<SetUp>]
-let Setup () =
-    ()
-
 [<Test>]
-let Test1 () =
-    Assert.Pass()
+let ``This test should fail``() =
+    failwith "Something good happened"
+    ()
