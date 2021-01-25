@@ -1,4 +1,5 @@
 FSharp.Core
+Unquote
 group Test
 NUnit3TestAdapter
 Microsoft.NET.Test.Sdk
