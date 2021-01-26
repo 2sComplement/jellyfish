@@ -1,5 +1,6 @@
 ﻿namespace Jellyfish.Core
 
+open System
 open FSharpx
 
 [<AutoOpen>]
@@ -27,17 +28,31 @@ module Instruction =
         | "R" -> Some R
         | "F" -> Some F
         | _ -> None
+    
+    let tryParseMany =        
+        Seq.map (string >> tryParse)
+        >> List.ofSeq
+        >> Option.sequence
+        
 
 type Tank = { Width: int; Height: int }
 
 [<RequireQualifiedAccess>]
 module Tank =
 
+    [<Literal>]
+    let MaxHeight = 60
+
+    [<Literal>]
+    let MaxWidth = 60
+
     let create (w, h) = { Width = w; Height = h }
     
     let tryParse : string -> Tank option = tryParseCoordinates >> Option.map create
 
-    let outOfBounds (x, y) tank = x < 0 || y < 0 || x > tank.Width || y > tank.Height
+    let isOutOfBounds (x, y) tank = x < 0 || y < 0 || x > tank.Width || y > tank.Height
+
+    let isInvalid tank = tank.Width > MaxWidth || tank.Height > MaxHeight
 
 type Orientation = | N | E | S | W
     
@@ -70,6 +85,7 @@ type Position =
     { X: int
       Y: int 
       Orientation: Orientation }
+    override x.ToString() = sprintf "%d%d%O" x.X x.Y x.Orientation
 
 [<RequireQualifiedAccess>]
 module Position =
@@ -118,7 +134,7 @@ module Position =
 
         let xy = coords nextPosition
 
-        match Tank.outOfBounds xy tank with
+        match Tank.isOutOfBounds xy tank with
         | false -> 
             Ok nextPosition
         | true when scented |> Set.contains (coords currentPosition) -> 
@@ -132,6 +148,16 @@ type Jellyfish =
         
 [<RequireQualifiedAccess>]
 module Jellyfish =
+
+    let create (ip, is) = { InitialPosition = ip; Instructions = is }
+
+    let tryParse (str: string) =
+        match str.Split(" ") |> Array.filter (not << String.IsNullOrWhiteSpace) with
+        | [| initialPosition; instructions |] ->
+            (initialPosition |> Position.tryParse, instructions |> Instruction.tryParseMany |> Option.map List.ofSeq)
+            |> Option.combine
+            |> Option.map create
+        | _ -> None
     
     let runSingle tank scented jellyfish =
         jellyfish.Instructions

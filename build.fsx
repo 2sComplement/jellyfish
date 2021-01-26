@@ -1,7 +1,6 @@
 #load ".fake/build.fsx/intellisense.fsx"
 open Fake.Core
 open Fake.DotNet
-// open Fake.DotNet.Testing
 open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
@@ -25,11 +24,6 @@ Target.create "Test" (fun _ ->
         match DotNet.exec id "vstest" testFile with
         | result when result.ExitCode <> 0 -> failwith "Process failed"
         | _ -> ()
-
-
-    // |> NUnit3.run (fun p ->
-    //    { p with
-    //         ShadowCopy = false })
  )
 
 Target.create "All" ignore
