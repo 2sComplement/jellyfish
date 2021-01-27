@@ -5,7 +5,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Prelude.fs" />
-    <Compile Include="Core.fs" />
+    <Compile Include="Instruction.fs" />
+    <Compile Include="Tank.fs" />
+    <Compile Include="Orientation.fs" />
+    <Compile Include="Position.fs" />
+    <Compile Include="Jellyfish.fs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="paket.references" />

@@ -1,11 +1,11 @@
-module Jellyfish.Tests
+module Jellyfish.MovementTests
 
 open NUnit.Framework
 open Jellyfish.Core
 open Swensen.Unquote
 
 [<Test>]
-let ``Orientation can rotate properly``() =
+let ``Orientation can rotate correctly``() =
 
     let testRotation (initialOrientation, instruction, expectedOrientation) =
         let actualOrientation = initialOrientation |> Orientation.rotate instruction
@@ -105,72 +105,6 @@ let ``Position is lost when moving out of tank bounds in -Y direction``() =
     
     { X = 3; Y = 0; Orientation = S }
     |> testMoveIn3x3Tank Error
-
-[<Test>]
-let ``Position is parsed given valid input``() =
-
-    Position.tryParse "12N" =! Some { X = 1; Y = 2; Orientation = N }
-    Position.tryParse "123E" =! Some { X = 12; Y = 3; Orientation = E }
-    Position.tryParse "1234S" =! Some { X = 12; Y = 34; Orientation = S }
-    Position.tryParse "00W" =! Some { X = 0; Y = 0; Orientation = W }
-
-[<Test>]
-let ``Position is not parsed given invalid input``() =
-
-    let test input =
-        let actual = input |> Position.tryParse
-        actual =! None
-
-    test ""
-    test " "
-    test "12 N"
-    test "12A"
-    test "12345E"
-    
-
-[<Test>]
-let ``Tank is parsed given valid input``() =
-
-    let test input expected =
-        let actual = input |> Tank.tryParse
-        actual =! Some expected
-
-    test "12" { Width = 1; Height = 2 }
-    test "123" { Width = 12; Height = 3 }
-    test "1234" { Width = 12; Height = 34 }
-
-[<Test>]
-let ``Tank is not parsed given invalid input``() =
-
-    let test input =
-        let actual = input |> Tank.tryParse
-        actual =! None
-        
-    test ""
-    test "a12"
-    test "12314124124"
-
-[<Test>]
-let ``Instructions are parsed given valid input``() =
-    
-    let test input expected =
-        let actual = input |> Instruction.tryParse
-        actual =! Some expected
-
-    test "R" R
-    test "L" L
-    test "F" F
-
-[<Test>]
-let ``Instructions are not parsed given invalid input``() =
-    
-    let test input =
-        let actual = input |> Instruction.tryParse
-        actual =! None
-
-    [ 'A' .. 'Z' ]
-    |> List.except [ 'R'; 'L'; 'F' ]
-    |> List.iter (string >> test)
 
 [<Test>]
 let ``Jellyfish instructions run given an initial position with no scents``() =
