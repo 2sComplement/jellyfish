@@ -40,19 +40,11 @@ type Tank = { Width: int; Height: int }
 [<RequireQualifiedAccess>]
 module Tank =
 
-    [<Literal>]
-    let MaxHeight = 60
-
-    [<Literal>]
-    let MaxWidth = 60
-
     let create (w, h) = { Width = w; Height = h }
     
     let tryParse : string -> Tank option = tryParseCoordinates >> Option.map create
 
     let isOutOfBounds (x, y) tank = x < 0 || y < 0 || x > tank.Width || y > tank.Height
-
-    let isInvalid tank = tank.Width > MaxWidth || tank.Height > MaxHeight
 
 type Orientation = | N | E | S | W
     

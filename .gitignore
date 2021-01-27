@@ -9,3 +9,4 @@ paket-files/
 *.DotSettings.user
 TestResult.xml
 *.user
+build_output/

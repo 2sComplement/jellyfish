@@ -3,6 +3,7 @@ storage none
 
 framework: netcoreapp3.1, netstandard2.1
 
+nuget Argu
 nuget FSharp.Core 4.7.2
 nuget FSharpx.Extras
 nuget Unquote
