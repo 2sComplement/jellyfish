@@ -14,8 +14,9 @@ module Instruction =
         | "F" -> Some F
         | _ -> None
     
-    let tryParseMany : string -> Instruction list option =        
-        Seq.map (string >> tryParse)
-        >> List.ofSeq
-        >> Option.sequence
+    let tryParseMany (str: string) =        
+        str 
+        |> Seq.map (string >> tryParse)
+        |> List.ofSeq
+        |> Option.sequence
         

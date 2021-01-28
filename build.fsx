@@ -2,7 +2,6 @@
 open Fake.Core
 open Fake.DotNet
 open Fake.IO
-open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
 
@@ -15,8 +14,15 @@ Target.create "Clean" (fun _ ->
 )
 
 Target.create "Build" (fun _ ->
-    !! "src/**/*.*proj"
+    !! "src/*.sln"
     |> Seq.iter (DotNet.build id)
+)
+
+Target.create "Publish" (fun _ ->
+    "src/Jellyfish.Console/Jellyfish.Console.fsproj"
+    |> sprintf "-r win-x64 -c Release -o bin /p:PublishSingleFile=true %s"
+    |> DotNet.exec id "publish" 
+    |> ignore
 )
 
 Target.create "Test" (fun _ ->
@@ -24,12 +30,13 @@ Target.create "Test" (fun _ ->
         match DotNet.exec id "vstest" testFile with
         | result when result.ExitCode <> 0 -> failwith "Process failed"
         | _ -> ()
- )
+)
 
 Target.create "All" ignore
 
 "Clean"
   ==> "Build"
+  ==> "Test"
   ==> "All"
 
 Target.runOrDefault "All"

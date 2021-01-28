@@ -121,6 +121,21 @@ let ``Jellyfish instructions run given an initial position with no scents``() =
     actual =! (Ok expectedPosition, Set.empty)
 
 [<Test>]
+let ``Jellyfish instructions run given instructions that go out of bounds``() =
+
+    // 32N FRRFLLFFRRFLL -> 33NLOST
+    
+    let tank = { Width = 5; Height = 3 }
+    let jellyfish =
+        { InitialPosition = { X = 3; Y = 2; Orientation = N }
+          Instructions = [ F; R; R; F; L; L; F; F; R; R; F; L; L ] }
+    let scents = Set.empty
+
+    let expectedPosition = { X = 3; Y = 3; Orientation = N }
+    let actual = jellyfish |> Jellyfish.runSingle tank scents
+    actual =! (Error expectedPosition, set [ (3,3) ])
+
+[<Test>]
 let ``Jellyfish instructions run given an initial position with scents``() =
 
     // 03W LLFFFLFLFL -> 23S
@@ -136,16 +151,57 @@ let ``Jellyfish instructions run given an initial position with scents``() =
     actual =! (Ok expectedPosition, scents)
 
 [<Test>]
-let ``Jellyfish instructions run given instructions that go out of bounds``() =
-
-    // 32N FRRFLLFFRRFLL -> 33NLOST
+let ``Jellyfish instructions run with history given an initial position``() =
     
     let tank = { Width = 5; Height = 3 }
     let jellyfish =
-        { InitialPosition = { X = 3; Y = 2; Orientation = N }
-          Instructions = [ F; R; R; F; L; L; F; F; R; R; F; L; L ] }
+        { InitialPosition = { X = 0; Y = 3; Orientation = W }
+          Instructions = [ L; L; F; F ] }
     let scents = Set.empty
 
-    let expectedPosition = { X = 3; Y = 3; Orientation = N }
-    let actual = jellyfish |> Jellyfish.runSingle tank scents
-    actual =! (Error expectedPosition, set [ (3,3) ])
+    let expectedPositions = 
+        [ Ok { X = 0; Y = 3; Orientation = W } 
+          Ok { X = 0; Y = 3; Orientation = S } 
+          Ok { X = 0; Y = 3; Orientation = E } 
+          Ok { X = 1; Y = 3; Orientation = E } 
+          Ok { X = 2; Y = 3; Orientation = E } ]
+    let actual = jellyfish |> Jellyfish.runSingleWithHistory tank scents
+    actual =! (expectedPositions, scents)
+
+[<Test>]
+let ``Jellyfish instructions run out of bounds with history given instructions that go out of bounds``() =
+    
+    let tank = { Width = 5; Height = 3 }
+    let jellyfish =
+        { InitialPosition = { X = 0; Y = 3; Orientation = W }
+          Instructions = [ L; L; L; F; F ] }
+    let scents = Set.empty
+
+    let expectedPositions = 
+        [ Ok { X = 0; Y = 3; Orientation = W } 
+          Ok { X = 0; Y = 3; Orientation = S } 
+          Ok { X = 0; Y = 3; Orientation = E } 
+          Ok { X = 0; Y = 3; Orientation = N } 
+          Error { X = 0; Y = 3; Orientation = N } ]
+    let actual = jellyfish |> Jellyfish.runSingleWithHistory tank scents
+    actual =! (expectedPositions, set [ (0, 3) ])
+
+[<Test>]
+let ``Jellyfish instructions run out of bounds with history with scents``() =
+    
+    let tank = { Width = 5; Height = 3 }
+    let jellyfish =
+        { InitialPosition = { X = 0; Y = 3; Orientation = W }
+          Instructions = [ F; L; L; R; F; F ] }
+    let scents = set [ (0, 3) ]
+
+    let expectedPositions = 
+        [ Ok { X = 0; Y = 3; Orientation = W } 
+          Ok { X = 0; Y = 3; Orientation = W } 
+          Ok { X = 0; Y = 3; Orientation = S } 
+          Ok { X = 0; Y = 3; Orientation = E } 
+          Ok { X = 0; Y = 3; Orientation = S } 
+          Ok { X = 0; Y = 2; Orientation = S } 
+          Ok { X = 0; Y = 1; Orientation = S } ]
+    let actual = jellyfish |> Jellyfish.runSingleWithHistory tank scents
+    actual =! (expectedPositions, scents)
