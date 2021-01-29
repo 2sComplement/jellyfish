@@ -35,9 +35,9 @@ Building and running unit tests can also be done through Visual Studio.
 
 ## Run
 
-Assemblies are built to the `build_output` folder.
+Assemblies/executables are built to the `build_output` folder.
 
-For convenience, a packaged windows executable is included in `bin`.
+For convenience, a packaged windows executable is included in `packaged`.
 
 ### Command Line Arguments
 
